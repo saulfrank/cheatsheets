@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-config
+  namespace: default
+data:
+  global_pipeline_stage: "development"
+  api2_python: "http://api-service-2-service"
+  api3_go: "http://api-service-3-service"

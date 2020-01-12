@@ -20,6 +20,9 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: global-config
           resources:
             limits:
               memory: "200Mi"

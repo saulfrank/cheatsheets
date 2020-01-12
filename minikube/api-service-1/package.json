@@ -2,7 +2,10 @@
   "name": "minkube",
   "version": "1.0.0",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "fetch-timeout": "0.0.2",
+    "node-fetch": "^2.6.0",
     "request": "^2.88.0"
   },
   "devDependencies": {
