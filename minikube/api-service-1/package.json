@@ -6,7 +6,10 @@
     "express": "^4.17.1",
     "fetch-timeout": "0.0.2",
     "node-fetch": "^2.6.0",
-    "request": "^2.88.0"
+    "pg": "^7.17.1",
+    "redis": "^2.8.0",
+    "request": "^2.88.0",
+    "response-time": "^2.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

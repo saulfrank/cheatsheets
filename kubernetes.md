@@ -7,6 +7,8 @@ kubectl delete deployment.apps/hello-deployment --namespace=default
 ```
 
 ```shell script
+# show client and server version
+kubectl version
 #Local minikube
 minikube start
 minikube addons list

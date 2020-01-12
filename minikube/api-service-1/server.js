@@ -2,11 +2,49 @@ const express = require('express');
 const Request = require("request");
 // const fetch = require("node-fetch");
 const fetchTimeout = require('fetch-timeout');
+const responseTime = require('response-time');
+const {promisify} = require('util');
+// const axios = require('axios');
+const redis = require('redis');
+const { Pool } = require('pg');
+require('dotenv').config();
+
+//--------- Initiate the Express app -----
 const app = express();
 const port = 3000;
-require('dotenv').config();
 // const HOST = '0.0.0.0';
 // app.use(express.json());
+// use response-time as a middleware
+app.use(responseTime());
+
+//---- connect to REDIS ------
+// create and connect redis client to local instance.
+const client = redis.createClient(process.env.redis_connect);
+
+console.log(process.env.redis_connect);
+// console.log(client);
+client.on('ready', function() {
+    redisIsReady = true;
+    console.log('redis is running');
+});
+const getAsync = promisify(client.get).bind(client);
+
+// Print redis errors to the console
+client.on('error', (err) => {
+    console.log("Error " + err);
+});
+
+//------------ DATABASE CONNECTION ---------------
+const pg_config = {
+    user: process.env.pg_user,
+    database: process.env.pg_database,
+    password: process.env.pg_password,
+    host: process.env.pg_host,
+    port: process.env.pg_port,
+    max: 10, // max number of clients in the pool
+    idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
+};
+const db = new Pool(pg_config);
 
 //send back 200 hello world
 app.get('/', async (req, res) => {
@@ -22,11 +60,7 @@ app.get('/', async (req, res) => {
 
     };
 
-    // pull from random app api
-    // TODO: change to environment variable
-    // TODO: chnage to async await
-    // http://192.168.64.2:30739/randomadd
-    // http://api-service-2-service/randomadd
+
     //-------- python micro service 2 [JSON response] -------
     try {
         console.log(`${process.env.global_pipeline_stage}`);
@@ -35,7 +69,7 @@ app.get('/', async (req, res) => {
         let api2 = await fetchTimeout(`${process.env.api2_python}/randomadd`,options,3000,"API2 timeout :(");
         const api2_data = await api2.json();
         // console.log(api2_data);
-        await res.write('hello there!\n\nThis is the micro service 1 made with node express.\n\nYour random number is ' + api2_data.randomadd +
+        await res.write('hello there!\n\nThis is the micro service 1 made with node express.\n\nAll API and database calls are asynchronous.\n\nYour random number is ' + api2_data.randomadd +
             ' \n\nThe random number comes from micro service 2 made with python fast api.');
 
     } catch (err) {
@@ -55,6 +89,20 @@ app.get('/', async (req, res) => {
     } catch (err) {
         res.status(500).end('\n\nSomething went wrong with api 3 :( - ' + err);
     }
+
+    //--- talk to redis
+    const datetime = new Date();
+    client.set('now_key', datetime, 'EX', 10, redis.print);
+
+    const redis_data = await getAsync('now_key');
+    await res.write('\n\nRedis time stored and retrieved: ' + redis_data);
+
+    const { rows } = await db.query('SELECT name, address FROM users');
+
+    await res.write('\n\n\n\nCockroach database retrieved sample data: ');
+    await rows.forEach(row => {
+        res.write('\n\n'+ row["name"] + ' - ' + row["address"]);
+    });
 
     await res.status(200).send();
     //

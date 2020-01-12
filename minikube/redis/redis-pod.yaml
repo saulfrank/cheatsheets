@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+spec:
+  containers:
+    - name: redis
+      image: redis:6.0-rc1-alpine
+      command:
+        - redis-server
+      env:
+        - name: MASTER
+          value: "true"
+      ports:
+        - containerPort: 6379
+      envFrom:
+        - configMapRef:
+            name: global-config
+      resources:
+        limits:
+          cpu: "0.1"
+          memory: "200Mi"
+      volumeMounts:
+        - mountPath: /redis-master-data
+          name: data
+  volumes:
+    - name: data
+      emptyDir: {}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis-service
+  namespace: default
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      #      port = port connected to ingress
+      port: 6379
+      # targetPort = port on container
+      targetPort: 6379
+  selector:
+    app: redis

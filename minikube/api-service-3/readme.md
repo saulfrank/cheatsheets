@@ -1,7 +1,11 @@
-### create a virtual environment
+### Build and run the go file
 ```bash
-python3 -m venv ./venv
-source venv/bin/activate
+#test run 
+go run bon.go
+
+# package to run: 
+go build bon.go -o bongo
+./bongo
 ```
 
 # build docker image, deploy to kubernetes
