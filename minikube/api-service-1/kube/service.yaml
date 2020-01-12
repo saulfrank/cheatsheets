@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: api-service-1-service
+  namespace: default
+  labels:
+    app: api-service-1
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+#      port = port connected to ingress
+      port: 80
+# targetPort = port on container
+      targetPort: 3000
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 3001
+  selector:
+    app: api-service-1
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+status:
+  loadBalancer: {}

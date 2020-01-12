@@ -1,0 +1,26 @@
+# https://swagger.io/docs/specification/2-0/basic-structure/
+# https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v2.0/yaml/petstore-minimal.yaml
+swagger: "2.0"
+info:
+  title: "Example hello world api"
+  description: "Example of get hello world api."
+  version: "1.0.0"
+
+host: "hello-api.endpoints.iot-testing-244623.cloud.goog"
+basePath: /api/v1
+schemes:
+  - "https"
+
+paths:
+  "/hello":
+    get:
+      summary: "Hello world"
+      description: "Hello world from Google Cloud."
+      operationId: gethello
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: OK
+        400:
+          description: "This api end point is missing."
