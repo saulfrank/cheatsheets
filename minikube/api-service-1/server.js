@@ -20,8 +20,8 @@ app.use(responseTime());
 //---- connect to REDIS ------
 // create and connect redis client to local instance.
 //TODO: timeout
-// const client = redis.createClient(process.env.redis_connect, connect_timeout=);
-//
+// const client = redis.createClient('redis://redis-service:6379/1');
+// //
 // console.log(process.env.redis_connect);
 // // console.log(client);
 // client.on('ready', function() {
@@ -36,14 +36,25 @@ app.use(responseTime());
 // });
 
 //------------ DATABASE CONNECTION ---------------
+// const pg_config = {
+//     user: process.env.pg_user,
+//     database: process.env.pg_database,
+//     password: process.env.pg_password,
+//     host: process.env.pg_host,
+//     port: process.env.pg_port,
+//     max: 10, // max number of clients in the pool
+//     idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed,
+//     connectionTimeoutMillis: 1000
+// };
 const pg_config = {
-    user: process.env.pg_user,
-    database: process.env.pg_database,
-    password: process.env.pg_password,
-    host: process.env.pg_host,
-    port: process.env.pg_port,
+    user: "test_user",
+    database: "test_db",
+    password: "Hello123^",
+    host: "postgresql-service",
+    port: 5432,
     max: 10, // max number of clients in the pool
-    idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
+    idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed,
+    connectionTimeoutMillis: 1000
 };
 const db = new Pool(pg_config);
 

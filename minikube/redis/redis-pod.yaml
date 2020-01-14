@@ -9,13 +9,13 @@ spec:
       imagePullPolicy: Never
       ports:
         - containerPort: 6379
-      envFrom:
-        - configMapRef:
-            name: global-config
+#      envFrom:
+#        - configMapRef:
+#            name: global-config
       resources:
         limits:
           cpu: "0.1"
-          memory: "200Mi"
+          memory: "400Mi"
       volumeMounts:
         - mountPath: /redis-master-data
           name: data
