@@ -21,3 +21,8 @@ minikube service api-service-2-service --url
 # add on url 
 <url>/randomadd
 ```
+
+#logging 
+```
+stern -n default api-service-1 -t
+```

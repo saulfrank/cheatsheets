@@ -4,13 +4,9 @@ metadata:
   name: redis
 spec:
   containers:
-    - name: redis
-      image: redis:6.0-rc1-alpine
-      command:
-        - redis-server
-      env:
-        - name: MASTER
-          value: "true"
+    - name: redis-container
+      image: saul/redis:latest
+      imagePullPolicy: Never
       ports:
         - containerPort: 6379
       envFrom:
