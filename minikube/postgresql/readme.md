@@ -19,6 +19,17 @@ psql -f "pagila-schema.sql" -d postgres --user=test_user
 psql -f "pagila-data.sql" -d test_db --user=test_user
 ```
 
+#Update pg_hba.conf
+```shell script
+vi  /var/lib/postgresql/data/pg_hba.conf
+#add:
+host    all     all     0.0.0.0/0   
+#ESC and :x to save and exit
+
+psql --user=test_user -d postgres
+SELECT pg_reload_conf();
+```
+
 # Create secrets
 ```shell script
 #From file:

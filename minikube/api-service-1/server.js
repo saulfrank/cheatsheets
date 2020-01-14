@@ -20,7 +20,7 @@ app.use(responseTime());
 //---- connect to REDIS ------
 // create and connect redis client to local instance.
 //TODO: timeout
-const client = redis.createClient('redis://redis-service:6379/0');
+const client = redis.createClient(process.env.redis_connect);
 //
 console.log(process.env.redis_connect);
 // console.log(client);
@@ -36,27 +36,31 @@ client.on('error', (err) => {
 });
 
 //------------ DATABASE CONNECTION ---------------
-// const pg_config = {
-//     user: process.env.pg_user,
-//     database: process.env.pg_database,
-//     password: process.env.pg_password,
-//     host: process.env.pg_host,
-//     port: process.env.pg_port,
-//     max: 10, // max number of clients in the pool
-//     idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed,
-//     connectionTimeoutMillis: 1000
-// };
+var pg_port = 5432;
+if(process.env.global_pipeline_stage == 'localhost'){pg_port=5400}
 const pg_config = {
-    user: "test_user",
-    database: "test_db",
-    password: "Hello123^",
-    host: "postgresql-service",
-    port: 5432,
+    user: process.env.pg_user,
+    database: process.env.pg_database,
+    password: process.env.pg_password,
+    host: process.env.pg_host,
+    port: pg_port,
     max: 10, // max number of clients in the pool
     idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed,
     connectionTimeoutMillis: 1000
 };
-const db = new Pool(pg_config);
+
+console.log(pg_config);
+
+const pool = new Pool(pg_config);
+
+// the pool will emit an error on behalf of any idle clients
+// it contains if a backend error or network partition happens
+pool.on('error', (err, client) => {
+    console.error('Unexpected error on idle client', err)
+    process.exit(-1)
+});
+
+
 
 //send back 200 hello world
 app.get('/', async (req, res) => {
@@ -109,21 +113,36 @@ app.get('/', async (req, res) => {
     const redis_data = await getAsync('now_key');
     await res.write('\n\nRedis time stored and retrieved: ' + redis_data);
 
-    const { rows } = await db.query('SELECT c.first_name, c.last_name, a.address ' +
-        'FROM customer c, address a where a.address_id =c.address_id limit 5');
+    // async/await - check out a client
+    res.write('\n\n\n\nProstgresql database retrieved sample data: ');
 
-    await res.write('\n\n\n\nProstgresql database retrieved sample data: ');
-    await rows.forEach(row => {
-        res.write('\n\n'+ row["first_name"] + ' ' + row["last_name"] + ' - ' + row["address"]);
-    });
+    let response;
+    try {
+        response = await pool.query('SELECT c.first_name, c.last_name, a.address ' +
+            'FROM customer c, address a where a.address_id =c.address_id limit 10');
+        // return response.rows;
+        response.rows.forEach(row => {
+            res.write('\n\n' + row["first_name"] + ' ' + row["last_name"] + ' - ' + row["address"]);
+        });
+    } catch (error) {
+        // handle error
+        // do not throw anything
+        console.log('database error');
+        console.log(error);
+    }
 
-    await res.status(200).send();
+
+    // console.log(data);
+
+
+    res.status(200).send();
     //
 });
+// ().catch(err => console.log(err.stack));
 
 app.get('/about', function (req, res) {
     console.log('about');
-    res.send('About, World!')
+    res.send('About, World!');
 });
 
 app.get('/environment', (req, res)=>{
