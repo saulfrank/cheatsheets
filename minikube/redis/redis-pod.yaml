@@ -2,6 +2,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: redis
+  namespace: default
+  labels:
+    app: redis
 spec:
   containers:
     - name: redis-container
@@ -30,10 +33,7 @@ metadata:
   namespace: default
 spec:
   ports:
-    - name: http
-      protocol: TCP
-      #      port = port connected to ingress
-      port: 6379
+    - port: 6379
       # targetPort = port on container
       targetPort: 6379
   selector:
