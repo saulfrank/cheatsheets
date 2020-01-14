@@ -1,40 +1,49 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: redis
-  namespace: default
+  name: redis-deployment
   labels:
     app: redis
 spec:
-  containers:
-    - name: redis-container
-      image: saul/redis:latest
-      imagePullPolicy: Never
-      ports:
-        - containerPort: 6379
-#      envFrom:
-#        - configMapRef:
-#            name: global-config
-      resources:
-        limits:
-          cpu: "0.1"
-          memory: "400Mi"
-      volumeMounts:
-        - mountPath: /redis-master-data
-          name: data
-  volumes:
-    - name: data
-      emptyDir: {}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis-container
+          image: redis:5.0.7
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "100m"
+            requests:
+              memory: "50Mi"
+              cpu: "50m"
 ---
 kind: Service
 apiVersion: v1
 metadata:
   name: redis-service
   namespace: default
+  labels:
+    app: redis
 spec:
   ports:
-    - port: 6379
+    - name: http
+      protocol: TCP
+      #      port = port connected to ingress
+      port: 6379
       # targetPort = port on container
       targetPort: 6379
   selector:
     app: redis
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster

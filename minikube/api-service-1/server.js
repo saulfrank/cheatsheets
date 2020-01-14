@@ -20,20 +20,20 @@ app.use(responseTime());
 //---- connect to REDIS ------
 // create and connect redis client to local instance.
 //TODO: timeout
-// const client = redis.createClient('redis://redis-service:6379/1');
-// //
-// console.log(process.env.redis_connect);
-// // console.log(client);
-// client.on('ready', function() {
-//     redisIsReady = true;
-//     console.log('redis is running');
-// });
-// const getAsync = promisify(client.get).bind(client);
+const client = redis.createClient('redis://redis-service:6379/0');
 //
-// // Print redis errors to the console
-// client.on('error', (err) => {
-//     console.log("Error " + err);
-// });
+console.log(process.env.redis_connect);
+// console.log(client);
+client.on('ready', function() {
+    redisIsReady = true;
+    console.log('redis is running');
+});
+const getAsync = promisify(client.get).bind(client);
+
+// Print redis errors to the console
+client.on('error', (err) => {
+    console.log("Error " + err);
+});
 
 //------------ DATABASE CONNECTION ---------------
 // const pg_config = {
@@ -103,14 +103,14 @@ app.get('/', async (req, res) => {
     }
 
     //--- talk to redis
-    // const datetime = new Date();
-    // client.set('now_key', datetime, 'EX', 10, redis.print);
-    //
-    // const redis_data = await getAsync('now_key');
-    // await res.write('\n\nRedis time stored and retrieved: ' + redis_data);
+    const datetime = new Date();
+    client.set('now_key', datetime, 'EX', 10, redis.print);
+
+    const redis_data = await getAsync('now_key');
+    await res.write('\n\nRedis time stored and retrieved: ' + redis_data);
 
     const { rows } = await db.query('SELECT c.first_name, c.last_name, a.address ' +
-        'FROM customer c, address a where a.address_id =c.address_id');
+        'FROM customer c, address a where a.address_id =c.address_id limit 5');
 
     await res.write('\n\n\n\nProstgresql database retrieved sample data: ');
     await rows.forEach(row => {

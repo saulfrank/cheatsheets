@@ -1,14 +1,23 @@
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
   name: postgresql-service
   namespace: default
+  labels:
+    app: postgresql
 spec:
   ports:
-    - port: 5432
+    - name: http
+      protocol: TCP
+      #      port = port connected to ingress
+      port: 5432
+      # targetPort = port on container
       targetPort: 5432
   selector:
     app: postgresql
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
