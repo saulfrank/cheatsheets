@@ -25,8 +25,8 @@ minikube service hello-service --url
 minikube ip
 sudo nano /etc/hosts
 #use .localhost to avoid Chrome searching in Google
-# do not use .localhost it is blocked by chrome. Use .local and put http:// in url
-<ip> hello.localhost
+# do not use .localhost or.local it is blocked by chrome. Use .internal and put http:// in url
+<ip> hello.internal
 
 ```
 

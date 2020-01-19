@@ -1,31 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-service-1-deployment
+  name: graphql-deployment
   labels:
-    app: api-service-1
+    app: graphql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: api-service-1
+      app: graphql
   template:
     metadata:
       labels:
-        app: api-service-1
+        app: graphql
     spec:
       containers:
-        - name: api-service-1-container
-          image: saul/api-service-1:latest
+        - name: graphql-container
+          image: saul/graphql:latest
           imagePullPolicy: Never
-          env:
-          - name: NODE_ENV
-            value: "production"
-          - name: pg_password
-            valueFrom:
-              secretKeyRef:
-                name: mysecrets
-                key: POSTGRES_PASSWORD
           ports:
             - containerPort: 3000
           envFrom:
