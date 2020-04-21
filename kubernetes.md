@@ -73,3 +73,16 @@ kubectl rollout restart deployment/nginx
 kubectl rollout restart deployments
 
 ```
+
+# Troubleshooting K8
+```shell script
+kubectl config view
+sudo kubectl cluster-info
+```
+
+#### How networking out works
+* https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+* ClusterIP = internal ip address
+* Nodeport = mapped external port
+* externalname = CNAME mapping requires CoreDNS
+* Loadbalancer = Cloud provider external load balancer
