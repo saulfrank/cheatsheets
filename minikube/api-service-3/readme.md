@@ -1,11 +1,23 @@
 ### Build and run the go file
 ```bash
+# export PATH=$PATH:/usr/local/go/bin
 #test run 
 go run bon.go
 
 # package to run: 
 go build bon.go -o bongo
 ./bongo
+```
+
+# writing Go
+```Golang
+# first line: package main means to create an executable and not a library
+package main
+import "fmt"
+
+# show document of fmt
+go doc fmt
+go doc fmt.Println
 ```
 
 # build docker image, deploy to kubernetes
