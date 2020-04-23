@@ -82,7 +82,33 @@ sudo kubectl cluster-info
 
 #### How networking out works
 * https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+* Good article: https://www.ovh.com/blog/getting-external-traffic-into-kubernetes-clusterip-nodeport-loadbalancer-and-ingress/
 * ClusterIP = internal ip address
 * Nodeport = mapped external port
 * externalname = CNAME mapping requires CoreDNS
 * Loadbalancer = Cloud provider external load balancer
+* Use Expose: 
+    * kubectl expose deployment hello-world --type=LoadBalancer --name=my-service
+    
+    
+### Get tokens for dashboards
+```shell script
+# Kubeapps: https://github.com/kubeapps/kubeapps/blob/master/docs/user/getting-started.md
+kubectl create serviceaccount kubeapps-operator
+kubectl create clusterrolebinding kubeapps-operator --clusterrole=cluster-admin --serviceaccount=default:kubeapps-operator
+
+Connect to dashboard and get token for K3S
+https://rancher.com/docs/k3s/latest/en/installation/kube-dashboard/
+```
+
+### Get Kubectl to run locally
+```shell script
+#On the server move to readable directory - scp cant use sudo
+sudo cp /etc/rancher/k3s/k3s.yaml ~ 
+sudo chown ubuntu:ubuntu ~/k3s.yaml
+scp -r ubuntu@<ip>:~/k3s.yaml .
+# Change ip address to ip address of node
+# move or copy file to kube config location locally
+cp k3s.yaml ~/.kube/config
+
+```
