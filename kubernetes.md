@@ -101,7 +101,7 @@ Connect to dashboard and get token for K3S
 https://rancher.com/docs/k3s/latest/en/installation/kube-dashboard/
 ```
 
-### Get Kubectl to run locally
+### Get Kubectl to run locally from remote cluster
 ```shell script
 #On the server move to readable directory - scp cant use sudo
 sudo cp /etc/rancher/k3s/k3s.yaml ~ 
@@ -111,4 +111,18 @@ scp -r ubuntu@<ip>:~/k3s.yaml .
 # move or copy file to kube config location locally
 cp k3s.yaml ~/.kube/config
 
+```
+
+### Create a secret
+https://longhorn.io/docs/0.8.0/users-guide/backup-and-restore/backupstores-and-backuptargets/
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-secret
+  namespace: longhorn-system
+type: Opaque
+stringData:
+  AWS_ACCESS_KEY_ID: 'xxx'
+  AWS_SECRET_ACCESS_KEY: 'yyy'
 ```
