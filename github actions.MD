@@ -11,9 +11,9 @@ cat ~/TOKEN.txt | docker login docker.pkg.github.com -u USERNAME --password-stdi
 ```
 3. Build the docker image
 ```shell script
-
+docker build -t myref/myapp:latest .
 ```
 4. Tag the docker image where OWNER = organisation name
 ```shell script
-docker tag IMAGE_ID docker.pkg.github.com/OWNER/REPOSITORY/IMAGE_NAME:VERSION
+docker tag myref/myapp:latest docker.pkg.github.com/OWNER/REPOSITORY/IMAGE_NAME:VERSION
 ```

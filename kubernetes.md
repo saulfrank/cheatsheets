@@ -6,6 +6,11 @@ kubectl delete --all pods --namespace=default
 kubectl delete deployment.apps/hello-deployment --namespace=default
 ```
 
+Create an nginx deployment from image
+```shell script
+kubectl create deployment nginx --image=nginx
+```
+
 ```shell script
 # show client and server version
 kubectl version
@@ -126,3 +131,66 @@ stringData:
   AWS_ACCESS_KEY_ID: 'xxx'
   AWS_SECRET_ACCESS_KEY: 'yyy'
 ```
+
+### Working with helm charts
+```shell script
+# list all released helm charts
+sudo helm ls --all-namespaces --all --kubeconfig /etc/rancher/k3s/k3s.yaml
+sudo helm install harbor --namespace harbor-system harbor/harbor
+sudo helm uninstall harbor --namespace harbor-system
+kubectl delete namespace harbor-system
+```
+
+### Provisioning storage
+* https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html
+* https://github.com/rancher/k3s/issues/1037
+
+
+### Exec into pod
+```shell script
+kubectl exec -it shell-demo -- /bin/bash
+```
+
+### Pulling private registry with K3S
+https://github.com/containerd/containerd/issues/3291
+```shell script
+
+#after docker login 
+cat ~/.docker/config.json
+kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson="/Users/xxx/.docker/config.json" \
+    --type=kubernetes.io/dockerconfigjson
+# create credentials for docker to connect:
+kubectl create secret docker-registry regcred --docker-server=https://docker.pkg.github.com --docker-username=<user | org> --docker-password=xxx --docker-email=<email>
+```
+
+## MicroK8s
+### Enabling public ip to K8S API in MicroK8s
+```shell script
+# add dns and ip address - on save it automatically reissues certs, no need to restart cluster
+sudo nano /var/snap/microk8s/current/certs/csr.conf.template
+
+# those IP and DNS needed for ingress too
+kubectl create deployment nginx --image=nginx
+kubectl expose deployment nginx --type=ClusterIP --name=nginx --port=80 --external-ip=xxx
+curl http://xxx:80
+
+# Enable nginx ingress controller & point domain to instance
+sudo microk8s enable ingress dns
+curl http://xyz.com/healthz
+```
+
+### Common commands
+````shell script
+# list of enabled services
+sudo microk8s status
+token=$(microk8s kubectl -n kube-system get secret | grep default-token | cut -d " " -f1)
+microk8s kubectl -n kube-system describe secret $token
+````
+
+### Get pod by labe'
+```shell script
+kubectl get pods --selector=app=cassandra -o jsonpath='{.items[*].metadata.labels.version}'
+kubectl exec -it shell-demo -- /bin/bash
+```
+
