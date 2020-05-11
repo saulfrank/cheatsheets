@@ -1,5 +1,8 @@
 #### Get started with React
 
+* Good getting started article: 
+* https://www.taniarascia.com/getting-started-with-react/
+
 1. brew update && brew install node
     * To fix node on Mac where npm wasnt available 
     ```
@@ -12,6 +15,11 @@
 3. npx create-react-app my-app <br/>
    cd my-app <br/>
    npm start
+   
+
+### Style guides
+* https://react-styleguidist.js.org/
+* https://storybook.js.org/
    
    
 ### Get started with React
@@ -29,4 +37,15 @@ yarn add node-sass
 ```typescript jsx
 import React from 'react';
 const name:string = 'Josh Perez';
+```
+
+### Managing environments
+https://dev.to/jam3/managing-env-variables-for-provisional-builds-h37
+```javascript
+console.log(process.env);
+
+```
+
+```shell script
+yarn add env-cmd
 ```

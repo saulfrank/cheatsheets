@@ -11,6 +11,28 @@ tsc typescript/example2.ts --alwaysStrict
 tsc -w -p .
 node typescript/example1.js
 ```
-```typescript jsx
 
+### Typescript with React
+* https://fettblog.eu/typescript-react/components/
+```typescript jsx
+// passing props to function in react
+const TableBody = props => {
+    
+    interface row {
+        name:string,
+        job: string
+    }
+    // alternative for row to interface above
+    const rows = props.characterData.map((row:{name:string, job:string}, index:number) => {
+
+        return (
+            <tr key={index}>
+                <td>{row.name}</td>
+                <td>{row.job}</td>
+            </tr>
+        )
+    });
+
+    return <tbody>{rows}</tbody>
+}
 ```
