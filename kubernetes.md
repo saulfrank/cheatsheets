@@ -194,3 +194,9 @@ kubectl get pods --selector=app=cassandra -o jsonpath='{.items[*].metadata.label
 kubectl exec -it shell-demo -- /bin/bash
 ```
 
+### set current context
+```shell script
+# set the current context
+kubectl config use-context staging
+```
+
